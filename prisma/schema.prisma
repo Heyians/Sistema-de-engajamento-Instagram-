@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime @default(now())
+
+  positioningDocument PositioningDocument?
+  interviewMessages   InterviewMessage[]
+  topics              Topic[]
+  bridges             Bridge[]
+  routineItems        RoutineItem[]
+  contentPieces       ContentPiece[]
+  metricEntries       MetricEntry[]
+}
+
+model PositioningDocument {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  niche          String
+  audience       String
+  toneOfVoice    String
+  painPoints     String
+  mythsToDebunk  String
+  contentPillars String
+  rawTranscript  String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model InterviewMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model Topic {
+  id           String        @id @default(cuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title        String
+  description  String?
+  source       String        @default("entrevista")
+  used         Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  routineItems RoutineItem[]
+}
+
+model Bridge {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        String
+  label       String
+  destination String
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model RoutineItem {
+  id           String        @id @default(cuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  weekStart    String
+  dayOfWeek    Int
+  objective    String
+  channel      String
+  format       String
+  topicId      String?
+  topic        Topic?        @relation(fields: [topicId], references: [id])
+  status       String        @default("pending")
+  createdAt    DateTime      @default(now())
+  contentPiece ContentPiece?
+
+  @@index([userId, weekStart])
+}
+
+model ContentPiece {
+  id            String        @id @default(cuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  routineItemId String        @unique
+  routineItem   RoutineItem   @relation(fields: [routineItemId], references: [id], onDelete: Cascade)
+  hook          String
+  body          String
+  cta           String?
+  bridgeId      String?
+  createdAt     DateTime      @default(now())
+  metrics       MetricEntry[]
+}
+
+model MetricEntry {
+  id             String       @id @default(cuid())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contentPieceId String
+  contentPiece   ContentPiece @relation(fields: [contentPieceId], references: [id], onDelete: Cascade)
+  reach          Int          @default(0)
+  saves          Int          @default(0)
+  clicks         Int          @default(0)
+  comments       Int          @default(0)
+  weekStart      String
+  createdAt      DateTime     @default(now())
+
+  @@unique([contentPieceId, weekStart])
+  @@index([userId, weekStart])
+}
