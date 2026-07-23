@@ -1,35 +1,43 @@
-import { GoogleGenAI } from "@google/genai";
+import OpenAI from "openai";
 
 export class AIConfigError extends Error {
   constructor() {
     super(
-      "GEMINI_API_KEY não configurada. Defina a variável de ambiente para usar os recursos de IA."
+      "DEEPSEEK_API_KEY não configurada. Defina a variável de ambiente para usar os recursos de IA."
     );
     this.name = "AIConfigError";
   }
 }
 
-let client: GoogleGenAI | null = null;
+let client: OpenAI | null = null;
 
-function getClient(): GoogleGenAI {
-  const apiKey = process.env.GEMINI_API_KEY;
+function getClient(): OpenAI {
+  const apiKey = process.env.DEEPSEEK_API_KEY;
   if (!apiKey) throw new AIConfigError();
-  if (!client) client = new GoogleGenAI({ apiKey });
+  if (!client) client = new OpenAI({ apiKey, baseURL: "https://api.deepseek.com" });
   return client;
 }
 
 function getModel(): string {
-  return process.env.AI_MODEL || "gemini-3.1-flash-lite";
+  return process.env.AI_MODEL || "deepseek-v4-flash";
 }
 
+// DeepSeek's v4 models think by default and burn max_tokens on reasoning_content
+// before ever writing the answer; disabling it keeps replies within budget.
+const NO_THINKING = { thinking: { type: "disabled" } };
+
 async function complete(system: string, prompt: string, maxTokens = 1500): Promise<string> {
-  const ai = getClient();
-  const response = await ai.models.generateContent({
+  const deepseek = getClient();
+  const response = await deepseek.chat.completions.create({
     model: getModel(),
-    contents: prompt,
-    config: { systemInstruction: system, maxOutputTokens: maxTokens },
-  });
-  return response.text ?? "";
+    max_tokens: maxTokens,
+    messages: [
+      { role: "system", content: system },
+      { role: "user", content: prompt },
+    ],
+    ...NO_THINKING,
+  } as OpenAI.ChatCompletionCreateParamsNonStreaming);
+  return response.choices[0]?.message?.content ?? "";
 }
 
 async function completeChat(
@@ -37,17 +45,14 @@ async function completeChat(
   history: { role: "user" | "assistant"; content: string }[],
   maxTokens = 800
 ): Promise<string> {
-  const ai = getClient();
-  const contents = history.map((m) => ({
-    role: m.role === "assistant" ? "model" : "user",
-    parts: [{ text: m.content }],
-  }));
-  const response = await ai.models.generateContent({
+  const deepseek = getClient();
+  const response = await deepseek.chat.completions.create({
     model: getModel(),
-    contents,
-    config: { systemInstruction: system, maxOutputTokens: maxTokens },
-  });
-  return response.text ?? "";
+    max_tokens: maxTokens,
+    messages: [{ role: "system", content: system }, ...history],
+    ...NO_THINKING,
+  } as OpenAI.ChatCompletionCreateParamsNonStreaming);
+  return response.choices[0]?.message?.content ?? "";
 }
 
 function extractJson<T>(text: string): T {

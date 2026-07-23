@@ -18,9 +18,10 @@ passos" abaixo.
 - [Prisma](https://www.prisma.io) + PostgreSQL (ex: um projeto Supabase gratuito)
 - Sessão própria via cookie httpOnly assinado com JWT (`jose`) + `bcryptjs`
   para senhas — sem depender de um provedor de auth externo
-- [`@google/genai`](https://www.npmjs.com/package/@google/genai) (Gemini API)
-  para o agente de entrevista, extração do posicionamento, planner semanal,
-  gerador de conteúdo e diagnóstico de métricas
+- [`openai`](https://www.npmjs.com/package/openai) apontado para a API
+  compatível da [DeepSeek](https://api-docs.deepseek.com/) — agente de
+  entrevista, extração do posicionamento, planner semanal, gerador de
+  conteúdo e diagnóstico de métricas
 
 ## Setup
 
@@ -43,10 +44,10 @@ a connection string (URI, com a senha) para `DATABASE_URL`.
 | ------------------- | ----------- | -------------------------------------------------------------------------- |
 | `DATABASE_URL`      | sim         | Connection string do Postgres, ex: `postgresql://user:senha@host:5432/postgres` |
 | `SESSION_SECRET`    | sim         | String longa e aleatória para assinar o cookie de sessão                   |
-| `GEMINI_API_KEY`    | para os recursos de IA | Sem ela, entrevista/planner/gerador retornam erro 503 amigável em vez de quebrar |
-| `AI_MODEL`          | não         | Modelo Gemini a usar (padrão: `gemini-3.1-flash-lite`)                     |
+| `DEEPSEEK_API_KEY`  | para os recursos de IA | Sem ela, entrevista/planner/gerador retornam erro 503 amigável em vez de quebrar |
+| `AI_MODEL`          | não         | Modelo DeepSeek a usar (padrão: `deepseek-v4-flash`)                       |
 
-Sem `GEMINI_API_KEY`, toda a parte de cadastro, posicionamento manual,
+Sem `DEEPSEEK_API_KEY`, toda a parte de cadastro, posicionamento manual,
 tópicos e pontes (CTAs) funciona normalmente — só os recursos que chamam a
 IA ficam bloqueados com uma mensagem clara.
 
