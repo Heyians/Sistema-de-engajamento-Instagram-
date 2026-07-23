@@ -27,7 +27,14 @@ interface RankedPiece extends Metric {
   channel: string;
   format: string;
   topicTitle: string | null;
+  queenMetric: "reach" | "saves" | "clicks";
 }
+
+const METRIC_LABEL: Record<"reach" | "saves" | "clicks", string> = {
+  reach: "alcance",
+  saves: "salvamentos",
+  clicks: "cliques",
+};
 
 function objectiveLabel(id: string) {
   return OBJECTIVES.find((o) => o.id === id)?.label ?? id;
@@ -186,7 +193,7 @@ export default function AnalyticsPanel({ weekStart, pieces }: { weekStart: strin
                 <ul className="mt-1 flex flex-col gap-1 text-sm opacity-80">
                   {top.map((t, idx) => (
                     <li key={idx}>
-                      {idx + 1}. {t.hook} ({t.channel})
+                      {idx + 1}. {t.hook} ({t.channel} · {METRIC_LABEL[t.queenMetric]}: {t[t.queenMetric]})
                     </li>
                   ))}
                 </ul>
@@ -196,7 +203,7 @@ export default function AnalyticsPanel({ weekStart, pieces }: { weekStart: strin
                 <ul className="mt-1 flex flex-col gap-1 text-sm opacity-80">
                   {bottom.map((b, idx) => (
                     <li key={idx}>
-                      {idx + 1}. {b.hook} ({b.channel})
+                      {idx + 1}. {b.hook} ({b.channel} · {METRIC_LABEL[b.queenMetric]}: {b[b.queenMetric]})
                     </li>
                   ))}
                 </ul>

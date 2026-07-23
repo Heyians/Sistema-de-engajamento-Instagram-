@@ -6,6 +6,15 @@ export const OBJECTIVES = [
 
 export type ObjectiveId = (typeof OBJECTIVES)[number]["id"];
 
+// The one metric that best signals success for each objective: reach for
+// growth (did it travel), saves for authority (did people file it away as
+// reference), clicks for sales (did it move someone toward a CTA).
+export const QUEEN_METRIC_BY_OBJECTIVE: Record<ObjectiveId, "reach" | "saves" | "clicks"> = {
+  crescimento: "reach",
+  autoridade: "saves",
+  venda: "clicks",
+};
+
 export const CHANNELS = [
   { id: "reels", label: "Reels / vídeo curto" },
   { id: "carrossel", label: "Carrossel" },

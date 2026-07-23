@@ -62,14 +62,15 @@ model Topic {
 }
 
 model Bridge {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type        String
-  label       String
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type       String
+  label      String
   destination String
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
+  active     Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  lastUsedAt DateTime?
 }
 
 model RoutineItem {
