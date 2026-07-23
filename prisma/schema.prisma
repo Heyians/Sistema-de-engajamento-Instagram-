@@ -21,6 +21,8 @@ model User {
   routineItems        RoutineItem[]
   contentPieces       ContentPiece[]
   metricEntries       MetricEntry[]
+  instagramConnection InstagramConnection?
+  instagramPosts      InstagramPost[]
 }
 
 model PositioningDocument {
@@ -117,4 +119,35 @@ model MetricEntry {
 
   @@unique([contentPieceId, weekStart])
   @@index([userId, weekStart])
+}
+
+model InstagramConnection {
+  id             String    @id @default(cuid())
+  userId         String    @unique
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  igUserId       String
+  username       String?
+  accessToken    String
+  tokenExpiresAt DateTime
+  connectedAt    DateTime  @default(now())
+  lastSyncedAt   DateTime?
+}
+
+model InstagramPost {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  igMediaId String   @unique
+  caption   String?
+  mediaType String
+  permalink String
+  postedAt  DateTime
+  reach     Int      @default(0)
+  likes     Int      @default(0)
+  comments  Int      @default(0)
+  saved     Int      @default(0)
+  shares    Int      @default(0)
+  syncedAt  DateTime @default(now())
+
+  @@index([userId, postedAt])
 }

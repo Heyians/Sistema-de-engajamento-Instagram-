@@ -22,9 +22,13 @@ function objectiveMeta(id: string) {
 export default function WeeklyRoutine({
   weekStart,
   initialItems,
+  todayDayOfWeek,
+  todayLabel,
 }: {
   weekStart: string;
   initialItems: RoutineItemView[];
+  todayDayOfWeek?: number;
+  todayLabel?: string;
 }) {
   const [items, setItems] = useState(initialItems);
   const [generatingPlan, setGeneratingPlan] = useState(false);
@@ -127,64 +131,84 @@ export default function WeeklyRoutine({
   }
 
   const sorted = [...items].sort((a, b) => a.dayOfWeek - b.dayOfWeek);
+  const todayItem = sorted.find((i) => i.dayOfWeek === todayDayOfWeek);
 
-  return (
-    <div className="flex flex-col gap-4">
-      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
-      {sorted.map((item) => {
-        const objective = objectiveMeta(item.objective);
-        return (
-          <div
-            key={item.id}
-            className="flex flex-col gap-2 rounded-lg border border-black/10 p-4 dark:border-white/10"
-          >
-            <div className="flex flex-wrap items-center gap-2 text-sm">
-              <span className="font-medium">{WEEKDAYS[item.dayOfWeek] ?? "Dia"}</span>
-              <span className="opacity-40">·</span>
-              <span>
-                {objective.emoji} {objective.label}
-              </span>
-              <span className="opacity-40">·</span>
-              <span className="opacity-70">{item.channel}</span>
-              <span className="opacity-40">·</span>
-              <span className="opacity-70">{item.format}</span>
-              {item.status === "published" && (
-                <span className="ml-auto rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs text-emerald-700 dark:text-emerald-400">
-                  Publicado
-                </span>
+  function renderCard(item: RoutineItemView, spotlight: boolean) {
+    const objective = objectiveMeta(item.objective);
+    return (
+      <div
+        key={`${spotlight ? "spotlight-" : ""}${item.id}`}
+        className={`flex flex-col gap-2 rounded-lg border p-4 ${
+          spotlight
+            ? "border-foreground/30 bg-black/[0.03] dark:bg-white/[0.04]"
+            : "border-black/10 dark:border-white/10"
+        }`}
+      >
+        <div className="flex flex-wrap items-center gap-2 text-sm">
+          {spotlight && (
+            <span className="rounded-full bg-foreground px-2 py-0.5 text-xs font-medium text-background">
+              Hoje
+            </span>
+          )}
+          <span className="font-medium">{WEEKDAYS[item.dayOfWeek] ?? "Dia"}</span>
+          <span className="opacity-40">·</span>
+          <span>
+            {objective.emoji} {objective.label}
+          </span>
+          <span className="opacity-40">·</span>
+          <span className="opacity-70">{item.channel}</span>
+          <span className="opacity-40">·</span>
+          <span className="opacity-70">{item.format}</span>
+          {item.status === "published" && (
+            <span className="ml-auto rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs text-emerald-700 dark:text-emerald-400">
+              Publicado
+            </span>
+          )}
+        </div>
+        {item.topic && <p className="text-sm opacity-80">Tópico: {item.topic.title}</p>}
+
+        {item.contentPiece ? (
+          <div className="mt-1 flex flex-col gap-2 rounded-md bg-black/5 p-3 dark:bg-white/5">
+            <p className="text-sm italic">&ldquo;{item.contentPiece.hook}&rdquo;</p>
+            <div className="flex gap-3 text-sm">
+              <Link href={`/content/${item.contentPiece.id}`} className="underline">
+                Ver / editar conteúdo
+              </Link>
+              {item.status !== "published" && (
+                <button
+                  onClick={() => markPublished(item.id)}
+                  className="opacity-70 hover:opacity-100"
+                >
+                  Marcar como publicado
+                </button>
               )}
             </div>
-            {item.topic && <p className="text-sm opacity-80">Tópico: {item.topic.title}</p>}
-
-            {item.contentPiece ? (
-              <div className="mt-1 flex flex-col gap-2 rounded-md bg-black/5 p-3 dark:bg-white/5">
-                <p className="text-sm italic">&ldquo;{item.contentPiece.hook}&rdquo;</p>
-                <div className="flex gap-3 text-sm">
-                  <Link href={`/content/${item.contentPiece.id}`} className="underline">
-                    Ver / editar conteúdo
-                  </Link>
-                  {item.status !== "published" && (
-                    <button
-                      onClick={() => markPublished(item.id)}
-                      className="opacity-70 hover:opacity-100"
-                    >
-                      Marcar como publicado
-                    </button>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <button
-                onClick={() => generateContent(item.id)}
-                disabled={generatingItemId === item.id}
-                className="self-start rounded-full border border-black/15 px-4 py-2 text-sm font-medium disabled:opacity-40 dark:border-white/15"
-              >
-                {generatingItemId === item.id ? "Gerando…" : "Gerar conteúdo"}
-              </button>
-            )}
           </div>
-        );
-      })}
+        ) : (
+          <button
+            onClick={() => generateContent(item.id)}
+            disabled={generatingItemId === item.id}
+            className="self-start rounded-full border border-black/15 px-4 py-2 text-sm font-medium disabled:opacity-40 dark:border-white/15"
+          >
+            {generatingItemId === item.id ? "Gerando…" : "Gerar conteúdo"}
+          </button>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+
+      {todayItem && (
+        <div className="flex flex-col gap-2">
+          <h2 className="text-sm font-medium opacity-70">Conteúdo de hoje ({todayLabel})</h2>
+          {renderCard(todayItem, true)}
+        </div>
+      )}
+
+      <div className="flex flex-col gap-4">{sorted.map((item) => renderCard(item, false))}</div>
     </div>
   );
 }

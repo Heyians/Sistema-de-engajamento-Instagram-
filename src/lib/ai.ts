@@ -209,3 +209,36 @@ Responda APENAS com um JSON no formato:
   const text = await complete(system, prompt, 700);
   return extractJson<AnalyticsDiagnosis>(text);
 }
+
+export interface DailyAdvice {
+  summary: string;
+  actions: string[];
+}
+
+export async function generateDailyAdvice(input: {
+  niche: string;
+  posts: {
+    caption: string | null;
+    mediaType: string;
+    daysAgo: number;
+    reach: number;
+    likes: number;
+    comments: number;
+    saved: number;
+    shares: number;
+  }[];
+}): Promise<DailyAdvice> {
+  const system = `Você é um consultor de crescimento no Instagram. Olhe os posts recentes reais da conta (não só os gerados pelo app — todo o perfil) e diga o que fazer HOJE para aumentar engajamento.
+Considere que posts com salvamentos e compartilhamentos altos em relação ao alcance indicam conteúdo que vale repetir/expandir, e que posts com alcance alto mas pouco salvamento/comentário indicam formato que atrai mas não retém.
+Responda APENAS com um JSON no formato:
+{"summary": "1-2 frases sobre o padrão dos posts recentes", "actions": ["ação concreta pra hoje 1", "ação concreta pra hoje 2", "ação concreta pra hoje 3"]}`;
+
+  const prompt = `Nicho: ${input.niche}\n\nPosts recentes do perfil (todos, não só os do app):\n${JSON.stringify(
+    input.posts,
+    null,
+    2
+  )}`;
+
+  const text = await complete(system, prompt, 700);
+  return extractJson<DailyAdvice>(text);
+}

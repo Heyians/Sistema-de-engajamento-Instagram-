@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/db";
-import { getCurrentWeekStart } from "@/lib/constants";
+import { getCurrentWeekStart, getTodayDayOfWeek, WEEKDAYS } from "@/lib/constants";
 import WeeklyRoutine from "@/components/WeeklyRoutine";
 
 export default async function DashboardPage() {
@@ -33,11 +33,31 @@ export default async function DashboardPage() {
   }
 
   const weekStart = getCurrentWeekStart();
-  const items = await db.routineItem.findMany({
-    where: { userId: session.userId, weekStart },
-    include: { topic: true, contentPiece: true },
-    orderBy: { dayOfWeek: "asc" },
-  });
+  const todayDayOfWeek = getTodayDayOfWeek();
+  const sevenDaysAgo = new Date(Date.now() - 7 * 86_400_000);
+
+  const [items, instagramConnection, recentPosts] = await Promise.all([
+    db.routineItem.findMany({
+      where: { userId: session.userId, weekStart },
+      include: { topic: true, contentPiece: true },
+      orderBy: { dayOfWeek: "asc" },
+    }),
+    db.instagramConnection.findUnique({ where: { userId: session.userId } }),
+    db.instagramPost.findMany({
+      where: { userId: session.userId, postedAt: { gte: sevenDaysAgo } },
+    }),
+  ]);
+
+  const publishedCount = items.filter((i) => i.status === "published").length;
+  const igTotals = recentPosts.reduce(
+    (acc, p) => ({
+      reach: acc.reach + p.reach,
+      likes: acc.likes + p.likes,
+      comments: acc.comments + p.comments,
+      saved: acc.saved + p.saved,
+    }),
+    { reach: 0, likes: 0, comments: 0, saved: 0 }
+  );
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-10">
@@ -57,8 +77,42 @@ export default async function DashboardPage() {
         )}
       </div>
 
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="rounded-lg border border-black/10 p-3 dark:border-white/10">
+          <p className="text-xs opacity-60">Publicado essa semana</p>
+          <p className="text-xl font-semibold">{publishedCount}/7</p>
+        </div>
+        {instagramConnection ? (
+          <>
+            <div className="rounded-lg border border-black/10 p-3 dark:border-white/10">
+              <p className="text-xs opacity-60">Alcance (7 dias)</p>
+              <p className="text-xl font-semibold">{igTotals.reach.toLocaleString("pt-BR")}</p>
+            </div>
+            <div className="rounded-lg border border-black/10 p-3 dark:border-white/10">
+              <p className="text-xs opacity-60">Curtidas + comentários</p>
+              <p className="text-xl font-semibold">
+                {(igTotals.likes + igTotals.comments).toLocaleString("pt-BR")}
+              </p>
+            </div>
+            <div className="rounded-lg border border-black/10 p-3 dark:border-white/10">
+              <p className="text-xs opacity-60">Salvamentos</p>
+              <p className="text-xl font-semibold">{igTotals.saved.toLocaleString("pt-BR")}</p>
+            </div>
+          </>
+        ) : (
+          <Link
+            href="/analytics"
+            className="col-span-3 flex items-center rounded-lg border border-dashed border-black/15 p-3 text-sm opacity-70 hover:opacity-100 dark:border-white/15"
+          >
+            Conecte o Instagram para ver alcance e engajamento reais aqui →
+          </Link>
+        )}
+      </div>
+
       <WeeklyRoutine
         weekStart={weekStart}
+        todayDayOfWeek={todayDayOfWeek}
+        todayLabel={WEEKDAYS[todayDayOfWeek]}
         initialItems={items.map((i) => ({
           id: i.id,
           dayOfWeek: i.dayOfWeek,
