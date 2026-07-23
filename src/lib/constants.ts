@@ -62,3 +62,8 @@ export function getMondayOfWeek(date: Date): string {
 export function getCurrentWeekStart(): string {
   return getMondayOfWeek(new Date());
 }
+
+export function getTodayDayOfWeek(): number {
+  const jsDay = new Date().getDay(); // 0=Sun..6=Sat
+  return (jsDay + 6) % 7; // 0=Mon..6=Sun, matching WEEKDAYS
+}
