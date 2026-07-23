@@ -30,7 +30,7 @@ export async function POST(
 
   const activeBridge = await db.bridge.findFirst({
     where: { userId, active: true },
-    orderBy: { createdAt: "asc" },
+    orderBy: [{ lastUsedAt: { sort: "asc", nulls: "first" } }, { createdAt: "asc" }],
   });
 
   try {
@@ -60,6 +60,9 @@ export async function POST(
         },
       }),
       db.routineItem.update({ where: { id: item.id }, data: { status: "generated" } }),
+      ...(activeBridge
+        ? [db.bridge.update({ where: { id: activeBridge.id }, data: { lastUsedAt: new Date() } })]
+        : []),
     ]);
 
     return NextResponse.json({ contentPiece });

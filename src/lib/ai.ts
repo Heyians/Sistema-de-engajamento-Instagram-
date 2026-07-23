@@ -193,10 +193,11 @@ export interface AnalyticsDiagnosis {
 }
 
 export async function generateAnalyticsDiagnosis(input: {
-  top: { hook: string; channel: string; format: string; objective: string; reach: number; saves: number; clicks: number }[];
-  bottom: { hook: string; channel: string; format: string; objective: string; reach: number; saves: number; clicks: number }[];
+  top: { hook: string; channel: string; format: string; objective: string; reach: number; saves: number; clicks: number; queenMetric: string }[];
+  bottom: { hook: string; channel: string; format: string; objective: string; reach: number; saves: number; clicks: number; queenMetric: string }[];
 }): Promise<AnalyticsDiagnosis> {
   const system = `Você analisa os números da semana de um criador de conteúdo e devolve um diagnóstico curto e acionável.
+Cada peça tem uma "queenMetric" (métrica-rainha): a métrica que define sucesso para o objetivo dela — reach para crescimento, saves para autoridade, clicks para venda. Julgue cada peça pela SUA métrica-rainha, não pelas outras métricas, e não compare diretamente peças de objetivos diferentes como se fossem a mesma escala.
 Responda APENAS com um JSON no formato:
 {"summary": "1-2 frases sobre o padrão da semana", "actions": ["ação prática 1", "ação prática 2", "ação prática 3"]}`;
 

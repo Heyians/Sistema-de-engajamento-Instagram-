@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireUserId } from "@/lib/session";
 import { generateAnalyticsDiagnosis, AIConfigError } from "@/lib/ai";
-import { getCurrentWeekStart } from "@/lib/constants";
+import { getCurrentWeekStart, QUEEN_METRIC_BY_OBJECTIVE, ObjectiveId } from "@/lib/constants";
 
 async function loadRanked(userId: string, weekStart: string) {
   const items = await db.routineItem.findMany({
@@ -21,7 +21,8 @@ async function loadRanked(userId: string, weekStart: string) {
       const saves = metric?.saves ?? 0;
       const clicks = metric?.clicks ?? 0;
       const comments = metric?.comments ?? 0;
-      const score = reach + saves * 3 + clicks * 5 + comments * 2;
+      const queenMetric = QUEEN_METRIC_BY_OBJECTIVE[i.objective as ObjectiveId] ?? "reach";
+      const score = { reach, saves, clicks }[queenMetric];
       return {
         routineItemId: i.id,
         contentPieceId: i.contentPiece!.id,
@@ -35,6 +36,7 @@ async function loadRanked(userId: string, weekStart: string) {
         clicks,
         comments,
         hasMetrics: !!metric,
+        queenMetric,
         score,
       };
     })
