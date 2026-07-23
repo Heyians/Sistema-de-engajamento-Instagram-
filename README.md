@@ -15,7 +15,7 @@ passos" abaixo.
 ## Stack
 
 - [Next.js 16](https://nextjs.org) (App Router, TypeScript, Tailwind CSS v4)
-- [Prisma](https://www.prisma.io) + SQLite (banco local em arquivo)
+- [Prisma](https://www.prisma.io) + PostgreSQL (ex: um projeto Supabase gratuito)
 - Sessão própria via cookie httpOnly assinado com JWT (`jose`) + `bcryptjs`
   para senhas — sem depender de um provedor de auth externo
 - [`@anthropic-ai/sdk`](https://www.npmjs.com/package/@anthropic-ai/sdk) para
@@ -26,18 +26,22 @@ passos" abaixo.
 
 ```bash
 npm install
-cp .env.example .env   # já existe um .env de desenvolvimento com valores padrão
-npx prisma db push     # cria o banco SQLite local (prisma/dev.db)
+cp .env.example .env   # preencha DATABASE_URL com a connection string do seu Postgres
+npx prisma db push     # cria as tabelas no Postgres apontado por DATABASE_URL
 npm run dev
 ```
 
 Abra [http://localhost:3000](http://localhost:3000).
 
+Precisa de um Postgres rápido para desenvolvimento? Um projeto gratuito no
+[Supabase](https://supabase.com) ou [Neon](https://neon.tech) funciona — copie
+a connection string (URI, com a senha) para `DATABASE_URL`.
+
 ### Variáveis de ambiente (`.env`)
 
 | Variável            | Obrigatória | Descrição                                                                 |
 | ------------------- | ----------- | -------------------------------------------------------------------------- |
-| `DATABASE_URL`      | sim         | Caminho do arquivo SQLite, ex: `file:./dev.db`                             |
+| `DATABASE_URL`      | sim         | Connection string do Postgres, ex: `postgresql://user:senha@host:5432/postgres` |
 | `SESSION_SECRET`    | sim         | String longa e aleatória para assinar o cookie de sessão                   |
 | `ANTHROPIC_API_KEY` | para os recursos de IA | Sem ela, entrevista/planner/gerador retornam erro 503 amigável em vez de quebrar |
 | `AI_MODEL`          | não         | Modelo Anthropic a usar (padrão: `claude-sonnet-5`)                        |
