@@ -82,3 +82,7 @@ Veja `prisma/schema.prisma` para o schema completo.
 - Multi-perfil (uma conta gerenciando vários nichos/clientes)
 - Biblioteca visual de templates para os carrosséis
 - A/B de ganchos e CTAs
+
+## Deploy
+
+Produção: https://sistema-de-engajamento-instagram.vercel.app
