@@ -1,37 +1,35 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenAI } from "@google/genai";
 
 export class AIConfigError extends Error {
   constructor() {
     super(
-      "ANTHROPIC_API_KEY não configurada. Defina a variável de ambiente para usar os recursos de IA."
+      "GEMINI_API_KEY não configurada. Defina a variável de ambiente para usar os recursos de IA."
     );
     this.name = "AIConfigError";
   }
 }
 
-let client: Anthropic | null = null;
+let client: GoogleGenAI | null = null;
 
-function getClient(): Anthropic {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+function getClient(): GoogleGenAI {
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new AIConfigError();
-  if (!client) client = new Anthropic({ apiKey });
+  if (!client) client = new GoogleGenAI({ apiKey });
   return client;
 }
 
 function getModel(): string {
-  return process.env.AI_MODEL || "claude-sonnet-5";
+  return process.env.AI_MODEL || "gemini-3.1-flash-lite";
 }
 
 async function complete(system: string, prompt: string, maxTokens = 1500): Promise<string> {
-  const anthropic = getClient();
-  const response = await anthropic.messages.create({
+  const ai = getClient();
+  const response = await ai.models.generateContent({
     model: getModel(),
-    max_tokens: maxTokens,
-    system,
-    messages: [{ role: "user", content: prompt }],
+    contents: prompt,
+    config: { systemInstruction: system, maxOutputTokens: maxTokens },
   });
-  const block = response.content.find((b) => b.type === "text");
-  return block && block.type === "text" ? block.text : "";
+  return response.text ?? "";
 }
 
 async function completeChat(
@@ -39,15 +37,17 @@ async function completeChat(
   history: { role: "user" | "assistant"; content: string }[],
   maxTokens = 800
 ): Promise<string> {
-  const anthropic = getClient();
-  const response = await anthropic.messages.create({
+  const ai = getClient();
+  const contents = history.map((m) => ({
+    role: m.role === "assistant" ? "model" : "user",
+    parts: [{ text: m.content }],
+  }));
+  const response = await ai.models.generateContent({
     model: getModel(),
-    max_tokens: maxTokens,
-    system,
-    messages: history,
+    contents,
+    config: { systemInstruction: system, maxOutputTokens: maxTokens },
   });
-  const block = response.content.find((b) => b.type === "text");
-  return block && block.type === "text" ? block.text : "";
+  return response.text ?? "";
 }
 
 function extractJson<T>(text: string): T {
