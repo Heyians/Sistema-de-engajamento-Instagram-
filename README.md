@@ -46,10 +46,17 @@ a connection string (URI, com a senha) para `DATABASE_URL`.
 | `SESSION_SECRET`    | sim         | String longa e aleatória para assinar o cookie de sessão                   |
 | `DEEPSEEK_API_KEY`  | para os recursos de IA | Sem ela, entrevista/planner/gerador retornam erro 503 amigável em vez de quebrar |
 | `AI_MODEL`          | não         | Modelo DeepSeek a usar (padrão: `deepseek-v4-flash`)                       |
+| `INSTAGRAM_APP_ID`     | para conectar o Instagram | App ID do app Meta for Developers com o produto "Instagram API with Instagram Login" |
+| `INSTAGRAM_APP_SECRET` | para conectar o Instagram | App Secret do mesmo app                                              |
 
 Sem `DEEPSEEK_API_KEY`, toda a parte de cadastro, posicionamento manual,
 tópicos e pontes (CTAs) funciona normalmente — só os recursos que chamam a
-IA ficam bloqueados com uma mensagem clara.
+IA ficam bloqueados com uma mensagem clara. Sem `INSTAGRAM_APP_ID`/
+`INSTAGRAM_APP_SECRET`, o botão "Conectar Instagram" em `/analytics` retorna
+erro 503.
+
+No app Meta, em Instagram > API setup with Instagram login, adicione
+`https://SEU_DOMINIO/api/instagram/callback` como redirect URI válida.
 
 ## Fluxo do MVP
 
@@ -65,20 +72,24 @@ IA ficam bloqueados com uma mensagem clara.
    pronto para publicar
 6. **Pontes** (`/bridges`) — cadastrar CTAs reais (keyword, quiz, link,
    agenda) usados pelo gerador de conteúdo
-7. **Análise** (`/analytics`) — registrar alcance/salvamentos/cliques/
-   comentários de cada peça e gerar um diagnóstico da semana (top/bottom 3
-   + ações sugeridas)
+7. **Análise** (`/analytics`) — conectar o Instagram para puxar
+   automaticamente alcance/curtidas/comentários/salvamentos/compartilhamentos
+   de todos os posts do perfil (não só os gerados pelo app) e gerar um
+   conselho do dia; também permite registrar métricas manualmente por peça
+   e gerar um diagnóstico da semana (top/bottom 3 + ações sugeridas)
 
 ## Modelo de dados
 
 `User` → `PositioningDocument` (1:1), `InterviewMessage[]`, `Topic[]`,
-`Bridge[]`, `RoutineItem[]` → `ContentPiece` (1:1) → `MetricEntry[]`.
+`Bridge[]`, `RoutineItem[]` → `ContentPiece` (1:1) → `MetricEntry[]`,
+`InstagramConnection` (1:1), `InstagramPost[]`.
 Veja `prisma/schema.prisma` para o schema completo.
 
 ## Próximos passos (fora do escopo do MVP)
 
 - Publicação direta no Instagram via Graph API (Reels, Carrossel, Stories)
-- Puxar métricas automaticamente em vez de digitar manualmente
+- Sincronização automática dos posts do Instagram (hoje é sob demanda, via
+  botão "Sincronizar agora"; falta um cron)
 - Automação real de comentário→DM
 - Multi-perfil (uma conta gerenciando vários nichos/clientes)
 - Biblioteca visual de templates para os carrosséis
