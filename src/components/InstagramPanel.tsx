@@ -73,92 +73,124 @@ export default function InstagramPanel({
 
   if (!connection) {
     return (
-      <div className="flex flex-col gap-2 rounded-lg border border-black/10 p-6 dark:border-white/10">
-        <h2 className="text-lg font-semibold">Instagram</h2>
-        <p className="text-sm opacity-70">
+      <div className="card flex flex-col gap-2 p-6">
+        <h2 className="text-lg">Instagram</h2>
+        <p className="text-sm text-(--ink-soft)">
           Conecte sua conta para puxar automaticamente o alcance, curtidas,
           comentários, salvamentos e compartilhamentos de todos os seus posts
           — não só os gerados aqui.
         </p>
         {feedback === "error" && (
-          <p className="text-sm text-red-600 dark:text-red-400">
-            Não foi possível conectar. Tente novamente.
-          </p>
+          <p className="text-sm text-(--coral)">Não foi possível conectar. Tente novamente.</p>
         )}
-        <a
-          href="/api/instagram/connect"
-          className="mt-2 self-start rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background"
-        >
+        <a href="/api/instagram/connect" className="btn btn-primary mt-2 self-start">
           Conectar Instagram
         </a>
       </div>
     );
   }
 
+  const totals = posts.reduce(
+    (acc, p) => ({
+      reach: acc.reach + p.reach,
+      likes: acc.likes + p.likes,
+      saved: acc.saved + p.saved,
+    }),
+    { reach: 0, likes: 0, saved: 0 }
+  );
+
   return (
-    <div className="flex flex-col gap-4 rounded-lg border border-black/10 p-6 dark:border-white/10">
-      <div className="flex flex-wrap items-center justify-between gap-2">
+    <div className="card overflow-hidden">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-(--cobalt) px-6 py-4">
         <div>
-          <h2 className="text-lg font-semibold">Instagram</h2>
-          <p className="text-sm opacity-70">
-            Conectado como {connection.username ? `@${connection.username}` : "conta vinculada"}
-            {connection.lastSyncedAt &&
-              ` · última sincronização ${new Date(connection.lastSyncedAt).toLocaleString("pt-BR")}`}
+          <p className="font-display text-base text-(--cream)">
+            {connection.username ? `@${connection.username}` : "Conta vinculada"}
+          </p>
+          <p className="text-xs text-(--cream)/75">
+            {connection.lastSyncedAt
+              ? `Sincronizado ${new Date(connection.lastSyncedAt).toLocaleString("pt-BR")}`
+              : "Ainda não sincronizado"}
           </p>
         </div>
         <button
           onClick={sync}
           disabled={syncing}
-          className="rounded-full border border-black/15 px-4 py-2 text-sm font-medium disabled:opacity-40 dark:border-white/15"
+          className="rounded-full bg-(--cream) px-4 py-2 text-sm font-medium text-(--cobalt) disabled:opacity-50"
         >
           {syncing ? "Sincronizando…" : "Sincronizar agora"}
         </button>
       </div>
 
-      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
-      {feedback === "connected" && posts.length === 0 && (
-        <p className="text-sm opacity-70">Conectado! Clique em &ldquo;Sincronizar agora&rdquo; para puxar seus posts.</p>
-      )}
-
-      {posts.length > 0 && (
-        <div className="flex flex-col gap-2">
-          {posts.map((p) => (
-            <a
-              key={p.id}
-              href={p.permalink}
-              target="_blank"
-              rel="noreferrer"
-              className="flex flex-col gap-1 rounded-md border border-black/10 p-3 text-sm hover:border-black/30 dark:border-white/10 dark:hover:border-white/30"
-            >
-              <p className="line-clamp-2 opacity-80">{p.caption ?? "(sem legenda)"}</p>
-              <p className="text-xs opacity-60">
-                {p.mediaType} · {new Date(p.postedAt).toLocaleDateString("pt-BR")} · alcance{" "}
-                {p.reach} · curtidas {p.likes} · comentários {p.comments} · salvos {p.saved} ·
-                compart. {p.shares}
-              </p>
-            </a>
-          ))}
-        </div>
-      )}
-
-      <div className="flex flex-col gap-3 border-t border-black/10 pt-4 dark:border-white/10">
-        <button
-          onClick={runAdvice}
-          disabled={loadingAdvice || posts.length === 0}
-          className="self-start rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background disabled:opacity-50"
-        >
-          {loadingAdvice ? "Analisando…" : "Gerar conselho do dia"}
-        </button>
-        {advice && (
-          <div className="rounded-lg bg-black/5 p-4 text-sm dark:bg-white/5">
-            <p>{advice.summary}</p>
-            <ul className="mt-2 list-disc pl-5">
-              {advice.actions.map((a, idx) => (
-                <li key={idx}>{a}</li>
-              ))}
-            </ul>
+      <div className="flex flex-col gap-4 p-6">
+        {posts.length > 0 && (
+          <div className="grid grid-cols-3 gap-3">
+            <div className="stat-tile">
+              <span className="stat-label">Alcance total</span>
+              <span className="stat-value">{totals.reach.toLocaleString("pt-BR")}</span>
+            </div>
+            <div className="stat-tile">
+              <span className="stat-label">Curtidas</span>
+              <span className="stat-value">{totals.likes.toLocaleString("pt-BR")}</span>
+            </div>
+            <div className="stat-tile">
+              <span className="stat-label">Salvamentos</span>
+              <span className="stat-value">{totals.saved.toLocaleString("pt-BR")}</span>
+            </div>
           </div>
         )}
+
+        {error && <p className="text-sm text-(--coral)">{error}</p>}
+        {feedback === "connected" && posts.length === 0 && (
+          <p className="text-sm text-(--ink-soft)">
+            Conectado! Clique em &ldquo;Sincronizar agora&rdquo; para puxar seus posts.
+          </p>
+        )}
+
+        {posts.length > 0 && (
+          <div className="flex flex-col gap-2">
+            {posts.map((p) => (
+              <a
+                key={p.id}
+                href={p.permalink}
+                target="_blank"
+                rel="noreferrer"
+                className="flex flex-col gap-2 rounded-2xl border border-(--line) p-3.5 text-sm hover:border-(--cobalt)"
+              >
+                <p className="line-clamp-2 text-(--ink-soft)">{p.caption ?? "(sem legenda)"}</p>
+                <div className="flex flex-wrap gap-1.5">
+                  <span className="badge">{p.mediaType}</span>
+                  <span className="badge">{new Date(p.postedAt).toLocaleDateString("pt-BR")}</span>
+                  <span className="badge">alcance {p.reach}</span>
+                  <span className="badge">curtidas {p.likes}</span>
+                  <span className="badge">comentários {p.comments}</span>
+                  <span className="badge">salvos {p.saved}</span>
+                  <span className="badge">compart. {p.shares}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+
+        <div className="flex flex-col gap-3 border-t border-(--line) pt-4">
+          <button
+            onClick={runAdvice}
+            disabled={loadingAdvice || posts.length === 0}
+            className="btn btn-primary self-start"
+          >
+            {loadingAdvice ? "Analisando…" : "Gerar conselho do dia"}
+          </button>
+          {advice && (
+            <div className="rounded-2xl bg-(--butter)/50 p-4 text-sm">
+              <p className="script-note mb-2 text-lg">conselho do dia</p>
+              <p>{advice.summary}</p>
+              <ul className="mt-2 list-disc pl-5">
+                {advice.actions.map((a, idx) => (
+                  <li key={idx}>{a}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

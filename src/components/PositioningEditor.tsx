@@ -58,7 +58,7 @@ export default function PositioningEditor({ initial }: { initial: PositioningDat
     }
   }
 
-  const field = "rounded-md border border-black/15 bg-transparent px-3 py-2 text-sm outline-none focus:border-black/40 dark:border-white/15 dark:focus:border-white/40";
+  const field = "field";
 
   return (
     <div className="flex flex-col gap-4">
@@ -112,17 +112,13 @@ export default function PositioningEditor({ initial }: { initial: PositioningDat
         />
       </label>
 
-      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+      {error && <p className="text-sm text-(--coral)">{error}</p>}
 
       <div className="flex items-center gap-3">
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="self-start rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background disabled:opacity-50"
-        >
+        <button onClick={handleSave} disabled={saving} className="btn btn-primary self-start">
           {saving ? "Salvando…" : "Salvar posicionamento"}
         </button>
-        {savedAt && <span className="text-xs opacity-60">Salvo.</span>}
+        {savedAt && <span className="text-xs text-(--ink-soft)">Salvo.</span>}
       </div>
     </div>
   );

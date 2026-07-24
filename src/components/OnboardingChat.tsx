@@ -82,25 +82,25 @@ export default function OnboardingChat() {
 
   return (
     <div className="flex flex-1 flex-col gap-4">
-      <div className="flex min-h-[24rem] flex-1 flex-col gap-3 overflow-y-auto rounded-lg border border-black/10 p-4 dark:border-white/10">
-        {loadingHistory && <p className="text-sm opacity-60">Carregando…</p>}
+      <div className="card flex min-h-[24rem] flex-1 flex-col gap-3 overflow-y-auto p-4">
+        {loadingHistory && <p className="text-sm text-(--ink-soft)">Carregando…</p>}
         {messages.map((m) => (
           <div
             key={m.id}
-            className={`max-w-[85%] rounded-lg px-3 py-2 text-sm whitespace-pre-wrap ${
+            className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm whitespace-pre-wrap ${
               m.role === "user"
-                ? "self-end bg-foreground text-background"
-                : "self-start bg-black/5 dark:bg-white/10"
+                ? "self-end rounded-br-md bg-(--cobalt) text-(--cream)"
+                : "self-start rounded-bl-md bg-(--butter)"
             }`}
           >
             {m.content}
           </div>
         ))}
-        {sending && <p className="self-start text-sm opacity-60">Agente está pensando…</p>}
+        {sending && <p className="script-note self-start text-lg">o agente está pensando…</p>}
         <div ref={bottomRef} />
       </div>
 
-      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+      {error && <p className="text-sm text-(--coral)">{error}</p>}
 
       <form
         onSubmit={(e) => {
@@ -113,26 +113,18 @@ export default function OnboardingChat() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Escreva sua resposta…"
-          className="flex-1 rounded-md border border-black/15 bg-transparent px-3 py-2 text-sm outline-none focus:border-black/40 dark:border-white/15 dark:focus:border-white/40"
+          className="field flex-1"
         />
-        <button
-          type="submit"
-          disabled={sending || !input.trim()}
-          className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-50"
-        >
+        <button type="submit" disabled={sending || !input.trim()} className="btn btn-primary">
           Enviar
         </button>
       </form>
 
-      <button
-        onClick={finishInterview}
-        disabled={finishing || userTurns < 3}
-        className="self-start rounded-full border border-black/15 px-4 py-2 text-sm font-medium disabled:opacity-40 dark:border-white/15"
-      >
+      <button onClick={finishInterview} disabled={finishing || userTurns < 3} className="btn btn-secondary self-start">
         {finishing ? "Gerando posicionamento…" : "Finalizar entrevista"}
       </button>
       {userTurns < 3 && (
-        <p className="text-xs opacity-60">
+        <p className="text-xs text-(--ink-soft)">
           Responda pelo menos 3 perguntas para poder finalizar.
         </p>
       )}

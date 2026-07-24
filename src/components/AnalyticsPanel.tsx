@@ -69,17 +69,16 @@ function MetricRow({ piece, weekStart }: { piece: Piece; weekStart: string }) {
     }
   }
 
-  const num =
-    "w-20 rounded-md border border-black/15 bg-transparent px-2 py-1 text-sm outline-none focus:border-black/40 dark:border-white/15 dark:focus:border-white/40";
+  const num = "field w-20 px-2 py-1";
 
   return (
-    <div className="flex flex-col gap-2 rounded-lg border border-black/10 p-3 dark:border-white/10">
+    <div className="card flex flex-col gap-2 p-3.5">
       <div className="text-sm">
         <span className="font-medium">{objectiveLabel(piece.objective)}</span>{" "}
-        <span className="opacity-60">
+        <span className="text-(--ink-soft)">
           · {piece.channel} · {piece.format}
         </span>
-        <p className="mt-0.5 italic opacity-80">&ldquo;{piece.hook}&rdquo;</p>
+        <p className="mt-0.5 italic text-(--ink-soft)">&ldquo;{piece.hook}&rdquo;</p>
       </div>
       <div className="flex flex-wrap items-end gap-3 text-xs">
         <label className="flex flex-col gap-1">
@@ -104,14 +103,10 @@ function MetricRow({ piece, weekStart }: { piece: Piece; weekStart: string }) {
             className={num}
           />
         </label>
-        <button
-          onClick={save}
-          disabled={saving}
-          className="rounded-full border border-black/15 px-3 py-1.5 disabled:opacity-40 dark:border-white/15"
-        >
+        <button onClick={save} disabled={saving} className="btn btn-secondary px-3 py-1.5 text-xs">
           {saving ? "Salvando…" : "Salvar"}
         </button>
-        {savedAt && <span className="opacity-60">Salvo.</span>}
+        {savedAt && <span className="text-(--ink-soft)">Salvo.</span>}
       </div>
     </div>
   );
@@ -150,9 +145,9 @@ export default function AnalyticsPanel({ weekStart, pieces }: { weekStart: strin
 
   if (pieces.length === 0) {
     return (
-      <p className="rounded-lg border border-black/10 p-6 text-sm opacity-70 dark:border-white/10">
+      <p className="card p-6 text-sm text-(--ink-soft)">
         Nenhum conteúdo gerado ainda essa semana. Gere conteúdo na{" "}
-        <a href="/dashboard" className="underline">
+        <a href="/dashboard" className="text-(--cobalt-deep) underline">
           rotina
         </a>{" "}
         antes de registrar números.
@@ -169,17 +164,13 @@ export default function AnalyticsPanel({ weekStart, pieces }: { weekStart: strin
       </div>
 
       <div className="flex flex-col gap-3">
-        <button
-          onClick={runDiagnosis}
-          disabled={loadingDiagnosis}
-          className="self-start rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background disabled:opacity-50"
-        >
+        <button onClick={runDiagnosis} disabled={loadingDiagnosis} className="btn btn-primary self-start">
           {loadingDiagnosis ? "Analisando…" : "Gerar diagnóstico da semana"}
         </button>
-        {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+        {error && <p className="text-sm text-(--coral)">{error}</p>}
 
         {diagnosis && (
-          <div className="flex flex-col gap-4 rounded-lg border border-black/10 p-4 dark:border-white/10">
+          <div className="card flex flex-col gap-4 p-4">
             <p className="text-sm">{diagnosis.summary}</p>
             <ul className="list-disc pl-5 text-sm">
               {diagnosis.actions.map((a, idx) => (
@@ -190,7 +181,7 @@ export default function AnalyticsPanel({ weekStart, pieces }: { weekStart: strin
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <p className="text-sm font-medium">Top 3</p>
-                <ul className="mt-1 flex flex-col gap-1 text-sm opacity-80">
+                <ul className="mt-1 flex flex-col gap-1 text-sm text-(--ink-soft)">
                   {top.map((t, idx) => (
                     <li key={idx}>
                       {idx + 1}. {t.hook} ({t.channel} · {METRIC_LABEL[t.queenMetric]}: {t[t.queenMetric]})
@@ -200,7 +191,7 @@ export default function AnalyticsPanel({ weekStart, pieces }: { weekStart: strin
               </div>
               <div>
                 <p className="text-sm font-medium">Bottom 3</p>
-                <ul className="mt-1 flex flex-col gap-1 text-sm opacity-80">
+                <ul className="mt-1 flex flex-col gap-1 text-sm text-(--ink-soft)">
                   {bottom.map((b, idx) => (
                     <li key={idx}>
                       {idx + 1}. {b.hook} ({b.channel} · {METRIC_LABEL[b.queenMetric]}: {b[b.queenMetric]})

@@ -58,12 +58,11 @@ export default function BridgesManager({ initial }: { initial: Bridge[] }) {
     await fetch(`/api/bridges/${id}`, { method: "DELETE" });
   }
 
-  const field =
-    "rounded-md border border-black/15 bg-transparent px-3 py-2 text-sm outline-none focus:border-black/40 dark:border-white/15 dark:focus:border-white/40";
+  const field = "field";
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2 rounded-lg border border-black/10 p-4 dark:border-white/10">
+      <div className="card flex flex-col gap-2 p-4">
         <div className="flex flex-col gap-2 sm:flex-row">
           <select value={type} onChange={(e) => setType(e.target.value)} className={field}>
             {BRIDGE_TYPES.map((t) => (
@@ -88,30 +87,27 @@ export default function BridgesManager({ initial }: { initial: Bridge[] }) {
         <button
           onClick={addBridge}
           disabled={saving || !label.trim() || !destination.trim()}
-          className="self-start rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background disabled:opacity-50"
+          className="btn btn-primary self-start"
         >
           {saving ? "Salvando…" : "Adicionar ponte"}
         </button>
-        {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+        {error && <p className="text-sm text-(--coral)">{error}</p>}
       </div>
 
       <ul className="flex flex-col gap-2">
         {bridges.map((b) => (
-          <li
-            key={b.id}
-            className="flex items-center justify-between gap-3 rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/10"
-          >
+          <li key={b.id} className="card flex items-center justify-between gap-3 px-3.5 py-3 text-sm">
             <div>
               <p className="font-medium">
                 {b.label}{" "}
-                <span className="font-normal opacity-50">
+                <span className="font-normal text-(--ink-soft)">
                   ({BRIDGE_TYPES.find((t) => t.id === b.type)?.label ?? b.type})
                 </span>
               </p>
-              <p className="opacity-70">{b.destination}</p>
+              <p className="text-(--ink-soft)">{b.destination}</p>
             </div>
             <div className="flex shrink-0 items-center gap-3">
-              <label className="flex items-center gap-1 text-xs opacity-70">
+              <label className="flex items-center gap-1 text-xs text-(--ink-soft)">
                 <input
                   type="checkbox"
                   checked={b.active}
@@ -119,13 +115,13 @@ export default function BridgesManager({ initial }: { initial: Bridge[] }) {
                 />
                 Ativa
               </label>
-              <button onClick={() => removeBridge(b.id)} className="opacity-60 hover:opacity-100">
+              <button onClick={() => removeBridge(b.id)} className="text-(--ink-soft) hover:text-(--coral)">
                 Remover
               </button>
             </div>
           </li>
         ))}
-        {bridges.length === 0 && <p className="text-sm opacity-60">Nenhuma ponte cadastrada.</p>}
+        {bridges.length === 0 && <p className="text-sm text-(--ink-soft)">Nenhuma ponte cadastrada.</p>}
       </ul>
     </div>
   );

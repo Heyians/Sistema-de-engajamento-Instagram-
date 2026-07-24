@@ -1,28 +1,64 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --butter: #f6e4a8;
+  --butter-deep: #eed37e;
+  --cream: #fffdf6;
+  --ink: #18140f;
+  --ink-soft: #6b6153;
+  --cobalt: #2643e5;
+  --cobalt-deep: #1a2fb8;
+  --coral: #ff5c72;
+  --line: rgba(24, 20, 15, 0.12);
+
+  --background: var(--butter);
+  --foreground: var(--ink);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-butter: var(--butter);
+  --color-butter-deep: var(--butter-deep);
+  --color-cream: var(--cream);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-cobalt: var(--cobalt);
+  --color-cobalt-deep: var(--cobalt-deep);
+  --color-coral: var(--coral);
+  --color-line: var(--line);
+  --font-sans: var(--font-karla);
+  --font-display: var(--font-fredoka);
+  --font-script: var(--font-caveat);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --butter: #2a2210;
+    --butter-deep: #3a2f14;
+    --cream: #241d10;
+    --ink: #f7efd8;
+    --ink-soft: #b6a97f;
+    --cobalt: #7c90ff;
+    --cobalt-deep: #a3b1ff;
+    --coral: #ff8595;
+    --line: rgba(247, 239, 216, 0.14);
   }
+}
+
+* {
+  border-color: var(--line);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-karla), system-ui, sans-serif;
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-fredoka), system-ui, sans-serif;
+  font-weight: 600;
 }
 
 /* iOS Safari auto-zooms on focus when a form control's font-size is under 16px */
@@ -30,4 +66,93 @@ input,
 textarea,
 select {
   font-size: 16px;
+}
+
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 999px;
+    font-family: var(--font-fredoka), system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0.6rem 1.25rem;
+    transition: opacity 0.15s ease, transform 0.1s ease;
+  }
+  .btn:disabled {
+    opacity: 0.45;
+  }
+  .btn-primary {
+    background: var(--cobalt);
+    color: var(--cream);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--cobalt-deep);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink);
+    border: 1.5px solid var(--line);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    border-color: var(--cobalt);
+    color: var(--cobalt);
+  }
+  .card {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    font-family: var(--font-fredoka), system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.7rem;
+    background: color-mix(in srgb, var(--cobalt) 12%, transparent);
+    color: var(--cobalt-deep);
+  }
+  .badge-success {
+    background: color-mix(in srgb, #1f9a5a 15%, transparent);
+    color: #1f9a5a;
+  }
+  .field {
+    border-radius: 12px;
+    border: 1.5px solid var(--line);
+    background: var(--cream);
+    padding: 0.6rem 0.85rem;
+    outline: none;
+  }
+  .field:focus {
+    border-color: var(--cobalt);
+  }
+  .stat-tile {
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    background: var(--cream);
+    padding: 0.9rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .stat-tile .stat-label {
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .stat-tile .stat-value {
+    font-family: var(--font-fredoka), system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 1.4rem;
+    color: var(--ink);
+  }
+  .script-note {
+    font-family: var(--font-caveat), cursive;
+    font-weight: 600;
+    color: var(--coral);
+  }
 }

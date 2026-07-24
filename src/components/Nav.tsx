@@ -10,38 +10,36 @@ export default async function Nav() {
     : null;
 
   return (
-    <header className="border-b border-black/10 dark:border-white/10">
+    <header className="border-b border-(--line) bg-(--cream)">
       <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3">
-        <Link href="/" className="font-semibold tracking-tight">
-          AI Maestro <span className="text-xs font-normal opacity-60">MVP</span>
+        <Link href="/" className="font-display flex items-baseline gap-1.5 text-lg text-(--ink)">
+          AI Maestro
+          <span className="badge">MVP</span>
         </Link>
 
         {user ? (
-          <nav className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-            <Link href="/dashboard" className="hover:underline">
+          <nav className="flex flex-wrap items-center gap-x-1 gap-y-2 text-sm">
+            <Link href="/dashboard" className="rounded-full px-3 py-1.5 hover:bg-(--butter)">
               Rotina
             </Link>
-            <Link href="/positioning" className="hover:underline">
+            <Link href="/positioning" className="rounded-full px-3 py-1.5 hover:bg-(--butter)">
               Posicionamento
             </Link>
-            <Link href="/bridges" className="hover:underline">
+            <Link href="/bridges" className="rounded-full px-3 py-1.5 hover:bg-(--butter)">
               Pontes
             </Link>
-            <Link href="/analytics" className="hover:underline">
+            <Link href="/analytics" className="rounded-full px-3 py-1.5 hover:bg-(--butter)">
               Análise
             </Link>
-            <span className="opacity-60">{user.name}</span>
+            <span className="px-2 text-(--ink-soft)">{user.name}</span>
             <LogoutButton />
           </nav>
         ) : (
           <nav className="flex flex-wrap items-center gap-3 text-sm">
-            <Link href="/login" className="hover:underline">
+            <Link href="/login" className="rounded-full px-3 py-1.5 hover:bg-(--butter)">
               Entrar
             </Link>
-            <Link
-              href="/register"
-              className="rounded-full bg-foreground px-3 py-1.5 text-background"
-            >
+            <Link href="/register" className="btn btn-primary">
               Começar agora
             </Link>
           </nav>

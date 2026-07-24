@@ -27,10 +27,12 @@ export default async function ContentPage({
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-10">
       <div>
-        <h1 className="text-2xl font-semibold">{piece.routineItem.topic?.title ?? "Conteúdo"}</h1>
-        <p className="mt-1 text-sm opacity-70">
-          {objective} · {piece.routineItem.channel} · {piece.routineItem.format}
-        </p>
+        <h1 className="text-2xl">{piece.routineItem.topic?.title ?? "Conteúdo"}</h1>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          <span className="badge">{objective}</span>
+          <span className="badge">{piece.routineItem.channel}</span>
+          <span className="badge">{piece.routineItem.format}</span>
+        </div>
       </div>
 
       <ContentEditor

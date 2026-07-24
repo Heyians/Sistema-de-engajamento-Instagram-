@@ -9,11 +9,11 @@ export default async function LoginPage() {
 
   return (
     <main className="mx-auto flex w-full max-w-sm flex-1 flex-col items-center justify-center gap-6 px-4 py-16">
-      <h1 className="text-2xl font-semibold">Entrar</h1>
+      <h1 className="text-2xl">Entrar</h1>
       <AuthForm mode="login" />
-      <p className="text-sm opacity-70">
+      <p className="text-sm text-(--ink-soft)">
         Ainda não tem conta?{" "}
-        <Link href="/register" className="underline">
+        <Link href="/register" className="text-(--cobalt-deep) underline">
           Criar agora
         </Link>
       </p>
