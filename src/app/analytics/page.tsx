@@ -38,8 +38,8 @@ export default async function AnalyticsPage({
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-10">
       <div>
-        <h1 className="text-2xl font-semibold">Análise da semana</h1>
-        <p className="mt-1 text-sm opacity-70">
+        <h1 className="text-2xl">Análise da semana</h1>
+        <p className="mt-1 text-sm text-(--ink-soft)">
           Registre alcance, salvamentos, cliques e comentários de cada peça
           publicada. O ritual leva ~15 minutos.
         </p>

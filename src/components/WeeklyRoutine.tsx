@@ -114,16 +114,12 @@ export default function WeeklyRoutine({
 
   if (items.length === 0) {
     return (
-      <div className="flex flex-col items-start gap-3 rounded-lg border border-black/10 p-6 dark:border-white/10">
-        <p className="text-sm opacity-70">
+      <div className="card flex flex-col items-start gap-3 p-6">
+        <p className="text-sm text-(--ink-soft)">
           Nenhuma rotina gerada para essa semana ainda.
         </p>
-        {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
-        <button
-          onClick={generatePlan}
-          disabled={generatingPlan}
-          className="rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background disabled:opacity-50"
-        >
+        {error && <p className="text-sm text-(--coral)">{error}</p>}
+        <button onClick={generatePlan} disabled={generatingPlan} className="btn btn-primary">
           {generatingPlan ? "Gerando rotina…" : "Gerar rotina da semana"}
         </button>
       </div>
@@ -138,72 +134,72 @@ export default function WeeklyRoutine({
     return (
       <div
         key={`${spotlight ? "spotlight-" : ""}${item.id}`}
-        className={`flex flex-col gap-2 rounded-lg border p-4 ${
-          spotlight
-            ? "border-foreground/30 bg-black/[0.03] dark:bg-white/[0.04]"
-            : "border-black/10 dark:border-white/10"
-        }`}
+        className="card overflow-hidden"
       >
-        <div className="flex flex-wrap items-center gap-2 text-sm">
-          {spotlight && (
-            <span className="rounded-full bg-foreground px-2 py-0.5 text-xs font-medium text-background">
-              Hoje
-            </span>
+        {spotlight && (
+          <div className="flex items-center justify-between bg-(--cobalt) px-4 py-2.5">
+            <span className="font-display text-sm text-(--cream)">Hoje · {WEEKDAYS[item.dayOfWeek] ?? "Dia"}</span>
+            {item.status === "published" && (
+              <span className="badge badge-success">Publicado</span>
+            )}
+          </div>
+        )}
+        <div className="flex flex-col gap-3 p-4">
+          {!spotlight && (
+            <div className="flex items-center justify-between">
+              <span className="font-display text-sm">{WEEKDAYS[item.dayOfWeek] ?? "Dia"}</span>
+              {item.status === "published" && <span className="badge badge-success">Publicado</span>}
+            </div>
           )}
-          <span className="font-medium">{WEEKDAYS[item.dayOfWeek] ?? "Dia"}</span>
-          <span className="opacity-40">·</span>
-          <span>
-            {objective.emoji} {objective.label}
-          </span>
-          <span className="opacity-40">·</span>
-          <span className="opacity-70">{item.channel}</span>
-          <span className="opacity-40">·</span>
-          <span className="opacity-70">{item.format}</span>
-          {item.status === "published" && (
-            <span className="ml-auto rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs text-emerald-700 dark:text-emerald-400">
-              Publicado
+
+          <div className="flex flex-wrap gap-1.5">
+            <span className="badge">
+              {objective.emoji} {objective.label}
             </span>
+            <span className="badge">{item.channel}</span>
+            <span className="badge">{item.format}</span>
+          </div>
+
+          {item.topic && <p className="text-sm text-(--ink-soft)">Tópico: {item.topic.title}</p>}
+
+          {item.contentPiece ? (
+            <div className="flex flex-col gap-2 rounded-2xl bg-(--butter)/50 p-3">
+              <p className="text-sm italic">&ldquo;{item.contentPiece.hook}&rdquo;</p>
+              <div className="flex gap-4 text-sm">
+                <Link href={`/content/${item.contentPiece.id}`} className="text-(--cobalt-deep) underline">
+                  Ver / editar conteúdo
+                </Link>
+                {item.status !== "published" && (
+                  <button
+                    onClick={() => markPublished(item.id)}
+                    className="text-(--ink-soft) hover:text-(--ink)"
+                  >
+                    Marcar como publicado
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={() => generateContent(item.id)}
+              disabled={generatingItemId === item.id}
+              className={spotlight ? "btn btn-primary self-start" : "btn btn-secondary self-start"}
+            >
+              {generatingItemId === item.id ? "Gerando…" : "Gerar conteúdo"}
+            </button>
           )}
         </div>
-        {item.topic && <p className="text-sm opacity-80">Tópico: {item.topic.title}</p>}
-
-        {item.contentPiece ? (
-          <div className="mt-1 flex flex-col gap-2 rounded-md bg-black/5 p-3 dark:bg-white/5">
-            <p className="text-sm italic">&ldquo;{item.contentPiece.hook}&rdquo;</p>
-            <div className="flex gap-3 text-sm">
-              <Link href={`/content/${item.contentPiece.id}`} className="underline">
-                Ver / editar conteúdo
-              </Link>
-              {item.status !== "published" && (
-                <button
-                  onClick={() => markPublished(item.id)}
-                  className="opacity-70 hover:opacity-100"
-                >
-                  Marcar como publicado
-                </button>
-              )}
-            </div>
-          </div>
-        ) : (
-          <button
-            onClick={() => generateContent(item.id)}
-            disabled={generatingItemId === item.id}
-            className="self-start rounded-full border border-black/15 px-4 py-2 text-sm font-medium disabled:opacity-40 dark:border-white/15"
-          >
-            {generatingItemId === item.id ? "Gerando…" : "Gerar conteúdo"}
-          </button>
-        )}
       </div>
     );
   }
 
   return (
     <div className="flex flex-col gap-6">
-      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+      {error && <p className="text-sm text-(--coral)">{error}</p>}
 
       {todayItem && (
         <div className="flex flex-col gap-2">
-          <h2 className="text-sm font-medium opacity-70">Conteúdo de hoje ({todayLabel})</h2>
+          <h2 className="script-note text-lg">conteúdo de hoje, {todayLabel?.toLowerCase()}</h2>
           {renderCard(todayItem, true)}
         </div>
       )}

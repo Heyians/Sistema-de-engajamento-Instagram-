@@ -15,10 +15,11 @@ export default async function BridgesPage() {
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-10">
       <div>
-        <h1 className="text-2xl font-semibold">Pontes (CTAs reais)</h1>
-        <p className="mt-1 text-sm opacity-70">
+        <h1 className="text-2xl">Pontes (CTAs reais)</h1>
+        <p className="mt-1 text-sm text-(--ink-soft)">
           Cadastre os destinos reais (palavra-chave, quiz, link, agenda). O
-          gerador de conteúdo usa a primeira ponte ativa como CTA.
+          gerador de conteúdo gira entre as pontes ativas, usando a que ficou
+          mais tempo sem ser escolhida.
         </p>
       </div>
 

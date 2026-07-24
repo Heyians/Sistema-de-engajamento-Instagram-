@@ -17,8 +17,7 @@ export default function ContentEditor({ id, initial }: { id: string; initial: Co
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const field =
-    "rounded-md border border-black/15 bg-transparent px-3 py-2 text-sm outline-none focus:border-black/40 dark:border-white/15 dark:focus:border-white/40";
+  const field = "field";
 
   async function handleSave() {
     setSaving(true);
@@ -64,23 +63,16 @@ export default function ContentEditor({ id, initial }: { id: string; initial: Co
         <textarea value={cta} onChange={(e) => setCta(e.target.value)} rows={2} className={field} />
       </label>
 
-      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+      {error && <p className="text-sm text-(--coral)">{error}</p>}
 
       <div className="flex flex-wrap items-center gap-3">
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background disabled:opacity-50"
-        >
+        <button onClick={handleSave} disabled={saving} className="btn btn-primary">
           {saving ? "Salvando…" : "Salvar"}
         </button>
-        <button
-          onClick={handleCopy}
-          className="rounded-full border border-black/15 px-5 py-2.5 text-sm font-medium dark:border-white/15"
-        >
+        <button onClick={handleCopy} className="btn btn-secondary">
           {copied ? "Copiado!" : "Copiar texto completo"}
         </button>
-        {savedAt && <span className="text-xs opacity-60">Salvo.</span>}
+        {savedAt && <span className="text-xs text-(--ink-soft)">Salvo.</span>}
       </div>
     </div>
   );

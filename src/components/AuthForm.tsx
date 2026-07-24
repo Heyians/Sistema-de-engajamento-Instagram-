@@ -48,7 +48,7 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="rounded-md border border-black/15 bg-transparent px-3 py-2 outline-none focus:border-black/40 dark:border-white/15 dark:focus:border-white/40"
+            className="field"
           />
         </label>
       )}
@@ -59,7 +59,7 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="rounded-md border border-black/15 bg-transparent px-3 py-2 outline-none focus:border-black/40 dark:border-white/15 dark:focus:border-white/40"
+          className="field"
         />
       </label>
       <label className="flex flex-col gap-1 text-sm">
@@ -70,17 +70,13 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
           minLength={mode === "register" ? 8 : undefined}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="rounded-md border border-black/15 bg-transparent px-3 py-2 outline-none focus:border-black/40 dark:border-white/15 dark:focus:border-white/40"
+          className="field"
         />
       </label>
 
-      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+      {error && <p className="text-sm text-(--coral)">{error}</p>}
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="mt-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background disabled:opacity-50"
-      >
+      <button type="submit" disabled={loading} className="btn btn-primary mt-2">
         {loading ? "Aguarde…" : mode === "login" ? "Entrar" : "Criar minha conta"}
       </button>
     </form>

@@ -17,15 +17,12 @@ export default async function DashboardPage() {
   if (!doc) {
     return (
       <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-4 px-4 py-16 text-center">
-        <h1 className="text-2xl font-semibold">Vamos montar seu posicionamento</h1>
-        <p className="opacity-70">
+        <h1 className="text-2xl">Vamos montar seu posicionamento</h1>
+        <p className="text-(--ink-soft)">
           Antes de gerar sua rotina de conteúdo, faça a entrevista com o agente
           AI Maestro.
         </p>
-        <Link
-          href="/onboarding"
-          className="rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background"
-        >
+        <Link href="/onboarding" className="btn btn-primary">
           Ir para a entrevista
         </Link>
       </main>
@@ -62,12 +59,12 @@ export default async function DashboardPage() {
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-10">
       <div>
-        <h1 className="text-2xl font-semibold">Rotina da semana</h1>
-        <p className="mt-1 text-sm opacity-70">
+        <h1 className="text-2xl">Rotina da semana</h1>
+        <p className="mt-1 text-sm text-(--ink-soft)">
           Semana de {new Date(weekStart + "T00:00:00").toLocaleDateString("pt-BR")}
         </p>
         {topicsCount === 0 && (
-          <p className="mt-2 rounded-md bg-amber-500/10 px-3 py-2 text-sm text-amber-700 dark:text-amber-400">
+          <p className="mt-2 rounded-2xl bg-(--coral)/10 px-3 py-2 text-sm text-(--coral)">
             Você ainda não tem tópicos cadastrados.{" "}
             <Link href="/positioning" className="underline">
               Adicione alguns
@@ -78,31 +75,31 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div className="rounded-lg border border-black/10 p-3 dark:border-white/10">
-          <p className="text-xs opacity-60">Publicado essa semana</p>
-          <p className="text-xl font-semibold">{publishedCount}/7</p>
+        <div className="stat-tile">
+          <span className="stat-label">Publicado essa semana</span>
+          <span className="stat-value">{publishedCount}/7</span>
         </div>
         {instagramConnection ? (
           <>
-            <div className="rounded-lg border border-black/10 p-3 dark:border-white/10">
-              <p className="text-xs opacity-60">Alcance (7 dias)</p>
-              <p className="text-xl font-semibold">{igTotals.reach.toLocaleString("pt-BR")}</p>
+            <div className="stat-tile">
+              <span className="stat-label">Alcance (7 dias)</span>
+              <span className="stat-value">{igTotals.reach.toLocaleString("pt-BR")}</span>
             </div>
-            <div className="rounded-lg border border-black/10 p-3 dark:border-white/10">
-              <p className="text-xs opacity-60">Curtidas + comentários</p>
-              <p className="text-xl font-semibold">
+            <div className="stat-tile">
+              <span className="stat-label">Curtidas + comentários</span>
+              <span className="stat-value">
                 {(igTotals.likes + igTotals.comments).toLocaleString("pt-BR")}
-              </p>
+              </span>
             </div>
-            <div className="rounded-lg border border-black/10 p-3 dark:border-white/10">
-              <p className="text-xs opacity-60">Salvamentos</p>
-              <p className="text-xl font-semibold">{igTotals.saved.toLocaleString("pt-BR")}</p>
+            <div className="stat-tile">
+              <span className="stat-label">Salvamentos</span>
+              <span className="stat-value">{igTotals.saved.toLocaleString("pt-BR")}</span>
             </div>
           </>
         ) : (
           <Link
             href="/analytics"
-            className="col-span-3 flex items-center rounded-lg border border-dashed border-black/15 p-3 text-sm opacity-70 hover:opacity-100 dark:border-white/15"
+            className="col-span-2 flex items-center rounded-2xl border border-dashed border-(--line) p-3 text-sm text-(--ink-soft) hover:border-(--cobalt) hover:text-(--cobalt) sm:col-span-3"
           >
             Conecte o Instagram para ver alcance e engajamento reais aqui →
           </Link>

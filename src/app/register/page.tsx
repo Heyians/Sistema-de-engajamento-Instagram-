@@ -9,11 +9,11 @@ export default async function RegisterPage() {
 
   return (
     <main className="mx-auto flex w-full max-w-sm flex-1 flex-col items-center justify-center gap-6 px-4 py-16">
-      <h1 className="text-2xl font-semibold">Criar conta</h1>
+      <h1 className="text-2xl">Criar conta</h1>
       <AuthForm mode="register" />
-      <p className="text-sm opacity-70">
+      <p className="text-sm text-(--ink-soft)">
         Já tem conta?{" "}
-        <Link href="/login" className="underline">
+        <Link href="/login" className="text-(--cobalt-deep) underline">
           Entrar
         </Link>
       </p>

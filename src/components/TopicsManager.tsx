@@ -49,8 +49,8 @@ export default function TopicsManager({ initialTopics }: { initialTopics: Topic[
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h2 className="text-lg font-semibold">Banco de tópicos</h2>
-        <p className="mt-1 text-sm opacity-70">
+        <h2 className="text-lg">Banco de tópicos</h2>
+        <p className="mt-1 text-sm text-(--ink-soft)">
           Sementes de conteúdo usadas pelo planner semanal.
         </p>
       </div>
@@ -60,46 +60,39 @@ export default function TopicsManager({ initialTopics }: { initialTopics: Topic[
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Título do tópico"
-          className="flex-1 rounded-md border border-black/15 bg-transparent px-3 py-2 text-sm outline-none focus:border-black/40 dark:border-white/15 dark:focus:border-white/40"
+          className="field flex-1"
         />
         <input
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Descrição (opcional)"
-          className="flex-1 rounded-md border border-black/15 bg-transparent px-3 py-2 text-sm outline-none focus:border-black/40 dark:border-white/15 dark:focus:border-white/40"
+          className="field flex-1"
         />
-        <button
-          onClick={addTopic}
-          disabled={saving || !title.trim()}
-          className="rounded-md border border-black/15 px-4 py-2 text-sm font-medium disabled:opacity-40 dark:border-white/15"
-        >
+        <button onClick={addTopic} disabled={saving || !title.trim()} className="btn btn-secondary">
           Adicionar
         </button>
       </div>
 
-      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+      {error && <p className="text-sm text-(--coral)">{error}</p>}
 
       <ul className="flex flex-col gap-2">
         {topics.map((t) => (
-          <li
-            key={t.id}
-            className="flex items-start justify-between gap-3 rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/10"
-          >
+          <li key={t.id} className="card flex items-start justify-between gap-3 px-3.5 py-3 text-sm">
             <div>
               <p className="font-medium">{t.title}</p>
-              {t.description && <p className="opacity-70">{t.description}</p>}
-              <p className="mt-0.5 text-xs opacity-50">{t.source}</p>
+              {t.description && <p className="text-(--ink-soft)">{t.description}</p>}
+              <p className="mt-0.5 text-xs text-(--ink-soft)">{t.source}</p>
             </div>
             <button
               onClick={() => removeTopic(t.id)}
-              className="shrink-0 opacity-60 hover:opacity-100"
+              className="shrink-0 text-(--ink-soft) hover:text-(--coral)"
             >
               Remover
             </button>
           </li>
         ))}
         {topics.length === 0 && (
-          <p className="text-sm opacity-60">Nenhum tópico ainda.</p>
+          <p className="text-sm text-(--ink-soft)">Nenhum tópico ainda.</p>
         )}
       </ul>
     </div>
